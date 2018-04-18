@@ -110,7 +110,7 @@ while cap.isOpened():
         frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
         # Change to grayscale
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Resize frame before displaying
         frame = cv2.resize(frame, vid_size, fx=0, fy=0, interpolation=cv2.INTER_AREA)
