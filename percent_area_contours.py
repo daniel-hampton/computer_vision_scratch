@@ -4,7 +4,7 @@ import numpy as np
 
 from pprint import pprint
 
-img = cv2.imread('multi-contour.png')
+img = cv2.imread('circle-holes.png')
 imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 ret, thresh = cv2.threshold(imggray, 127, 255, cv2.THRESH_BINARY)
@@ -28,6 +28,9 @@ for cont in contours:
     total_area += area
 
     contour_centroids.append((cx, cy, area))
+
+# Print total area
+print('Total area: {:.0f}'.format(total_area))
 
 # Define font for text
 font = cv2.FONT_HERSHEY_SIMPLEX
