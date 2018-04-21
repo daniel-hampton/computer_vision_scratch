@@ -25,7 +25,7 @@ def nothing(x):
 
 
 # read image
-img = cv2.imread('blob.jpg', cv2.IMREAD_GRAYSCALE)
+img = cv2.imread('moth.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Setup SimpleBlobDetector parameters.
 params = cv2.SimpleBlobDetector_Params()
@@ -100,6 +100,9 @@ if len(keypoints) > 0:
     print(type(keypoints[0]))
     print(len(keypoints))
     print(keypoints[0].pt)
+
+# Save resulting image
+# cv2.imwrite('cloth_holes_detection.png', img_with_keypoints)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
