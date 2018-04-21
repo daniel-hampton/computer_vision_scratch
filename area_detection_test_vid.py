@@ -1,5 +1,5 @@
 """
-Testing threshold functions on still image from client
+Testing threshold functions on video from client
 """
 
 import cv2
@@ -75,7 +75,7 @@ while cap.isOpened():
         cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
 
         # Draw ROI polygon
-        cv2.polylines(img, [myROI], True, (0, 0, 255), 2, cv2.LINE_AA)  # must be list of polygon points
+        # cv2.polylines(img, [myROI], True, (0, 0, 255), 2, cv2.LINE_AA)  # must be list of polygon points
 
         # Resize video for display on monitor
         # [WARNING] DON'T DETERMINE AREA VALUES AFTER THIS POINT. NUMBER OF PIXELS HAS CHANGED.
@@ -84,8 +84,10 @@ while cap.isOpened():
         height, width = img.shape[:2]
 
         # Write text to image
-        text = 'Area: {:02.2f}%'.format(contour_area_total / total_area * 100)
+        text = 'Dry Area: {:02.0f}%'.format(contour_area_total / total_area * 100)
         font = cv2.FONT_HERSHEY_SIMPLEX
+        # Draw black background for text
+        cv2.rectangle(img, (0, int(0.97 * height)), (width - 1, int(0.96 * height - 65)), (0, 0, 0), -1, cv2.LINE_AA)
         img = cv2.putText(img, text, (int(0.05 * width), int(0.95 * height)), font, 2, (0, 0, 255), 2, cv2.LINE_AA)
 
         # covert BGR to RGB colors

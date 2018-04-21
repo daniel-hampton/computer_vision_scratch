@@ -70,7 +70,7 @@ cv2.createTrackbar(inertia, window_name, int(params.minInertiaRatio * 100), 100,
 cv2.createTrackbar(convex, window_name, int(params.minConvexity * 100), 100, nothing)  # convert from 0 to 1 range
 
 # Define video capture object
-cap = cv2.VideoCapture('IMG_0125.MOV')
+cap = cv2.VideoCapture('fabric.mp4')
 frame_counter = 0
 
 # Define the codec and create VideoWriter object.
