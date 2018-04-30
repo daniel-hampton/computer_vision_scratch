@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-cap = cv2.VideoCapture('IMG_0125.MOV')
+cap = cv2.VideoCapture('device_video.mp4')
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 vid_size = (540, 960)

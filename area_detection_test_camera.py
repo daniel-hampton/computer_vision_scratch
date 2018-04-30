@@ -7,17 +7,24 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(1)  
+ip = "192.168.1.235"
+admin = 'admin'
+pwd = 'admin'
+# cap = cv2.VideoCapture('http://{0}/videostream.cgi?user={1}&pwd={2}&resolution=32'.format(ip, admin, pwd))
+# cap = cv2.VideoCapture('rtsp://{0}/11'.format(ip))
 
-ret = cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-ret = cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+# ret = cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+# ret = cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 fps = cap.get(cv2.CAP_PROP_FPS)
+w = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+h = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 vid_size = (1920, 1080)
-out = cv2.VideoWriter('output/webcam_contour_output.avi', fourcc, 30.0, vid_size)
+out = cv2.VideoWriter('output/webcam_contour_output2.avi', fourcc, 20.0, vid_size)
 
-cv2.namedWindow('Video', cv2.WINDOW_FULLSCREEN)
+cv2.namedWindow('Video', cv2.WINDOW_KEEPRATIO)
 
 while cap.isOpened():
 
@@ -36,7 +43,11 @@ while cap.isOpened():
 
         # Define region of interest polygon
         # roi of polygon points
-        myROI = np.array([[200, 200], [1720, 200], [1720, 880], [200, 880]], np.int32)
+        offset = 0.20  # fractional offset from edge of  screen
+        myROI = np.array([[width * offset, height * offset],
+                         [(1-offset) * width, height * offset],
+                         [(1-offset) * width, (1-offset) * height],
+                         [width * offset, (1-offset) * height]], np.int32)
         cv2.fillPoly(mask, [myROI], 1)
 
         # Get total area of region of interest
@@ -78,6 +89,7 @@ while cap.isOpened():
         print('Total Contour Area: {:.0f}'.format(contour_area_total))
         # fps = cap.get(cv2.CAP_PROP_FPS)
         # print('FPS: {}'.format(fps))  # doesn't work with my webcam
+        print('{} x {}'.format(w, h))
 
         # Draw contours
         cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
@@ -107,7 +119,7 @@ while cap.isOpened():
         # Write video
         # out.write(img)
 
-        k = cv2.waitKey(25) & 0xFF
+        k = cv2.waitKey(1) & 0xFF
         if k == 27:
             break
 

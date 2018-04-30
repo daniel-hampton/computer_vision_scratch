@@ -1,6 +1,7 @@
 
 import cv2
 import numpy as np
+from matplotlib import pyplot as plt
 
 from pprint import pprint
 
@@ -49,6 +50,10 @@ for i, cont in enumerate(contour_centroids):
         img = cv2.putText(img, line, (cont[0], y), font, 0.4, (0, 0, 255), 1, cv2.LINE_AA)
 
 cv2.imshow('Contour Areas', img)
+# plt.imshow(img, interpolation = 'bicubic')
+# plt.xticks([]), plt.yticks([])
+# plt.title('Contour Areas')
+# plt.show()
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()

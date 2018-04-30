@@ -62,7 +62,8 @@ convex = 'Min Convexity'
 # cv2.createTrackbar(convex, window_name, int(params.minConvexity * 100), 100, nothing)  # convert from 0 to 1 range
 
 # Define video capture object
-cap = cv2.VideoCapture('fabric.mp4')
+# cap = cv2.VideoCapture('fabric.mp4')
+cap = cv2.VideoCapture(1)
 frame_counter = 0
 
 # Define the codec and create VideoWriter object.
@@ -151,13 +152,13 @@ while cap.isOpened():
                                                cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
         # Draw light blob keypoints
-        img_with_keypoints = cv2.drawKeypoints(img_with_keypoints, keypoints2, np.array([]), (0, 0, 255),
-                                               cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        # img_with_keypoints = cv2.drawKeypoints(img_with_keypoints, keypoints2, np.array([]), (0, 0, 255),
+                                            #    cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
         # Add text counter
         font = cv2.FONT_HERSHEY_SIMPLEX
         # print(img_with_keypoints.shape)
-        output_string = 'Holes Detected: {}'.format(len(keypoints) + len(keypoints2))
+        output_string = 'Holes Detected: {}'.format(len(keypoints) + 0)  # + len(keypoints2))
         # Draw black background for text
         cv2.rectangle(img_with_keypoints, (0, int(0.91 * height)), (width//4, int(0.91 * height - 40)), (0, 0, 0), -1, cv2.LINE_AA)
         cv2.putText(img_with_keypoints, output_string,
@@ -168,7 +169,7 @@ while cap.isOpened():
         img_with_keypoints = cv2.resize(img_with_keypoints, vid_size, fx=0, fy=0, interpolation=cv2.INTER_AREA)
 
         # Write the video to file
-        out.write(img_with_keypoints)
+        # out.write(img_with_keypoints)
 
         # Display the frame.
         cv2.imshow(window_name, img_with_keypoints)
