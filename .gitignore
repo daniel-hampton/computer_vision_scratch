@@ -1,7 +1,9 @@
 .idea/
+.vscode/
 output/
 .pytest_cache/
 *__pycache__/
 *.mp4
 *.MOV
 bartow_video/
+video_input/
