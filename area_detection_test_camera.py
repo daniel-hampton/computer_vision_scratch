@@ -70,23 +70,52 @@ while cap.isOpened():
         # Use Adaptive Thresholding
         # thresh = cv2.adaptiveThreshold(gray_roi, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
-        ret_image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        ret_image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
         # number of contours
-        print('Number of contours: {}'.format(len(contours)))
+        print('ROI total area: {}'.format(total_area))
 
-        # Create list of contour areas sorted descending
-        areas = [cv2.contourArea(x) for x in contours]
-        con_areas = list(zip(contours, areas))  # list of tuples of (contour, contour_area)
-        con_areas = sorted(con_areas, key=lambda x: x[1], reverse=True)
+        try:
+            # Get the level-0 contours indices. Those with Parent hierarchy values of -1
+            h0 = np.where(hierarchy[0][:, 3] == -1)
 
-        # Calc total area of contours
-        contour_area_total = 0
-        for cont, area in con_areas:
-            contour_area_total += area
+            # Create a list of contours from the h0 contour indices.
+            contours_white = [contours[i] for i in h0[0]]
 
-        print('Total area: {}'.format(total_area))
-        print('Total Contour Area: {:.0f}'.format(contour_area_total))
+            # Get the level-1 contours indices. The children of the level-0 contours.
+            h1 = np.where(hierarchy[0][:, 3] != -1)
+
+            # Create a list of contours from the h1 contour indices.
+            contours_black = [contours[i] for i in h1[0]]
+            areas_black = [cv2.contourArea(x) for x in contours_black]
+
+            # Create list of contour areas sorted descending
+            areas = [cv2.contourArea(x) for x in contours_white]
+            con_areas = list(zip(contours_white, areas))  # list of tuples of (contour, contour_area)
+            con_areas = sorted(con_areas, key=lambda x: x[1], reverse=True)
+
+            # Calc total area of white contours
+            white_contour_area_total = 0
+            for cont, area in con_areas:
+                white_contour_area_total += area
+
+            # Calc total area of black (holes) contours
+            holes_area_total = 0
+            for area in areas_black:
+                holes_area_total += area
+
+            contour_area_total = white_contour_area_total - holes_area_total
+
+            print('Total Contour Area: {:.0f}'.format(white_contour_area_total))
+            print('Number of contours total: {}'.format(len(contours_white)))
+
+        except TypeError as err:
+            print('No contours found.')
+            print(err)
+
+            # When there are no contours set the area to zero
+            contour_area_total = 0
+
         # fps = cap.get(cv2.CAP_PROP_FPS)
         # print('FPS: {}'.format(fps))  # doesn't work with my webcam
         print('{} x {}'.format(w, h))

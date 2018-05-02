@@ -5,12 +5,18 @@ from matplotlib import pyplot as plt
 
 from pprint import pprint
 
-img = cv2.imread('circle-holes.png')
+img = cv2.imread('circle-holes2.png')
 imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 ret, thresh = cv2.threshold(imggray, 127, 255, cv2.THRESH_BINARY)
 
-image, contours, heirarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+
+# Get the level-0 contours indices. Those with Parent hierarchy values of -1
+h0 = np.where(hierarchy[0][:, 3] == -1)
+
+# Create a list of contours from the h0 contour indices.
+contours = [contours[i] for i in h0[0]]
 
 print("Number of contours: {}".format(len(contours)))
 
