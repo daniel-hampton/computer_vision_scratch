@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-cap = cv2.VideoCapture(1)  
+cap = cv2.VideoCapture(0)
 ip = "192.168.1.235"
 admin = 'admin'
 pwd = 'admin'
@@ -72,7 +72,7 @@ while cap.isOpened():
 
         ret_image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
-        # number of contours
+        # Area of ROI
         print('ROI total area: {}'.format(total_area))
 
         try:
@@ -116,8 +116,6 @@ while cap.isOpened():
             # When there are no contours set the area to zero
             contour_area_total = 0
 
-        # fps = cap.get(cv2.CAP_PROP_FPS)
-        # print('FPS: {}'.format(fps))  # doesn't work with my webcam
         print('{} x {}'.format(w, h))
 
         # Draw contours
