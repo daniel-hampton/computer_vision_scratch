@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 ip = "192.168.1.235"
 admin = 'admin'
 pwd = 'admin'
