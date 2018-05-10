@@ -7,7 +7,7 @@ import numpy as np
 
 ip = "192.168.1.235"
 # cap = cv2.VideoCapture('rtsp://{0}/11'.format(ip))
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 cv2.namedWindow('Mask', cv2.WINDOW_KEEPRATIO)
 cv2.namedWindow('Video', cv2.WINDOW_KEEPRATIO)
@@ -21,7 +21,7 @@ h = int(151 * (179 / 359))
 s = int(53 * (255 / 100))
 v = int(78 * (255 / 100))
 
-lower_green = np.array([h - 10, s - 20, v - 50])
+lower_green = np.array([h - 10, s - 50, v - 50])
 upper_green = np.array([h + 10, s + 20, v + 50])
 
 while cap.isOpened():
