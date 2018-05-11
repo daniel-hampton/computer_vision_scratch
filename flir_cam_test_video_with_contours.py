@@ -7,19 +7,87 @@ Exit codes:
 99 - Not enough cameras, no cameras found.
 """
 
+import os
 import cv2
 import numpy as np
 import PySpin
 
+from datetime import datetime
+
+# Enables or disables trackbars in Video window
 trackbar_mode = True
+
+# The low threshold value. Grayscale values lower than this will be set to black (0).
+# Values between low and high will be set to white (255)
 default_thresh = 85
+
+# The high threshold value. Grayscale values higher than this will be set to black (0).
 default_high_thresh = 255
+
+# Initial data for logging function
+last_file = datetime.now()
+
+# Name of file as string version of timestamp. New file every hour.
+filename = last_file.strftime('%Y-%m-%d_%H.txt')
+
+# Headings for CSV files.
+heading_string = 'timestamp,percent dry,low_thresh,high_thresh\n'
+
+# Relative path to record data files.
+data_path = 'data'
+# Create directory if it doesn't already exist.
+os.makedirs(data_path, exist_ok=True)
+
+# If file currently doesn't exist.
+if not os.path.isfile(os.path.join(data_path, filename)):
+    # Create new file
+    f = open(os.path.join(data_path, filename), 'w')
+    f.write(heading_string)
+    f.close()
+
+# last time the file was written to.
+last_write = datetime.now()
 
 
 def nothing():
-    """ Empty function to supply to opencv trackbar object"""
+    """
+    Empty function to supply to opencv trackbar object
+    """
 
     pass
+
+
+def write_data_to_file(timestamp, percent_dry, thresh_low, thresh_high):
+    """
+    Log data to file every minute
+    :return:
+    """
+
+    # These variables are global so assignments update the original variable and not the one in the local scope.
+    global last_file
+    global last_write
+    global filename
+
+    current_time = datetime.now()
+    last_write_dt = datetime.now() - last_write
+
+    # If it's a new hour from the last file created, create a new file, update last_file timestamp.
+    if current_time.hour != last_file.hour:
+        last_file = datetime.now()
+        filename = last_file.strftime('%Y-%m-%d_%H.txt')
+        f = open(os.path.join(data_path, filename), 'w')
+        f.write(heading_string)
+        f.close()
+        return
+
+    if last_write_dt.seconds >= 1:
+        with open(os.path.join(data_path, filename), 'a') as file:
+            last_write = datetime.now()
+            data_string = '{0},{1:.0f},{2},{3}\n'.format(timestamp, percent_dry, thresh_low, thresh_high)
+            file.write(data_string)
+            print(data_string)
+
+    return
 
 
 def print_node_value(nodemap, node_name):
@@ -224,7 +292,9 @@ def run_single_camera(cam):
 def analyze_contours(img):
     # Get height, width and area of whole image.
     # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-    # img = cv2.resize(img, (1090, 1920), interpolation=cv2.INTER_AREA)
+
+    # Create timestamp for data logging
+    timestamp = datetime.now()
 
     # Get height, width and area of whole image.
     height, width = img.shape[:2]
@@ -276,7 +346,7 @@ def analyze_contours(img):
     ret_image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
     # Area of ROI
-    print('ROI total area: {}'.format(total_area))
+    # print('ROI total area: {}'.format(total_area))
 
     try:
         # Get the level-0 contours indices. Those with Parent hierarchy values of -1
@@ -312,8 +382,8 @@ def analyze_contours(img):
 
         contour_area_total = white_contour_area_total - holes_area_total
 
-        print('Total Contour Area: {:.0f}'.format(white_contour_area_total))
-        print('Number of contours total: {}'.format(len(contours_white)))
+        # print('Total Contour Area: {:.0f}'.format(white_contour_area_total))
+        # print('Number of contours total: {}'.format(len(contours_white)))
 
     except TypeError as err:
         print('No contours found.')
@@ -322,7 +392,7 @@ def analyze_contours(img):
         # When there are no contours set the area to zero
         contour_area_total = 0
 
-    print('{} x {}'.format(width, height))
+    # print('{} x {}'.format(width, height))
 
     # Draw contours
     cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
@@ -348,10 +418,14 @@ def analyze_contours(img):
     cv2.rectangle(img, (0, int(0.97 * height)), (width - 1, int(0.96 * height - 65)), (0, 0, 0), -1, cv2.LINE_AA)
     img = cv2.putText(img, text, (int(0.05 * width), int(0.95 * height)), font, 2, (0, 0, 255), 2, cv2.LINE_AA)
 
+    # Write data to csv file
+    write_data_to_file(timestamp, dry_area_percent, thresh_value, high_thresh)
+
     # covert BGR to RGB colors
     # img = img[:, :, ::-1]
 
     return img
+
 
 # Create gui window to display images/video
 cv2.namedWindow('Video', cv2.WINDOW_KEEPRATIO)

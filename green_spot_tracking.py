@@ -95,3 +95,5 @@ while cap.isOpened():
 
 cap.release()
 cv2.destroyAllWindows()
+
+input('Press ENTER to close program')
