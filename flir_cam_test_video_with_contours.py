@@ -59,7 +59,11 @@ def nothing():
 
 def write_data_to_file(timestamp, percent_dry, thresh_low, thresh_high):
     """
-    Log data to file every minute
+    Log data to csv file every second.
+    :param timestamp:
+    :param percent_dry:
+    :param thresh_low:
+    :param thresh_high:
     :return:
     """
 
